@@ -11,8 +11,8 @@ from geometry_msgs.msg import Twist
 LIST_OF_ARUCOS = [0, 4, 2 ,1]
 ROTATING_SPEED = 200 
 LINEAR_SPEED = 150
-THRESHOLD_AREA_MIN = 3800 
-THRESHOLD_AREA_MAX = 4000 
+THRESHOLD_AREA_MIN = 3400 
+THRESHOLD_AREA_MAX = 3600 
 
 
 class TARUCO_Nav:
@@ -65,14 +65,14 @@ class TARUCO_Nav:
         if self.active:
             rospy.loginfo("CMD_VEL: ROVER MOVING RIGHT")
             data = Twist()
-            data.angular.z = ROTATING_SPEED
+            data.angular.z = - ROTATING_SPEED
             self.pub.publish(data)
     
     def move_left(self):
         if self.active:
             rospy.loginfo("CMD_VEL: ROVER MOVING LEFT")
             data = Twist()
-            data.angular.z = - ROTATING_SPEED
+            data.angular.z = ROTATING_SPEED
             self.pub.publish(data)
         
     
@@ -117,13 +117,14 @@ class TARUCO_Nav:
                     
 
                         # LEFT
-                        if center_x <= self.left_grid:        
-                            self.move_left()
+                        if center_x <= self.left_grid:  
+                            if not self.reached(area, id):      
+                                self.move_left()
                         
                         #RIGHT
                         elif center_x >= self.right_grid:
-                            
-                            self.move_right()
+                            if not self.reached(area, id):
+                                self.move_right()
                         
                         #MIDDLE 
                         else: 
